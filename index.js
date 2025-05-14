@@ -16,15 +16,21 @@ app.get('/', (req, res) => {
   res.send('Hello World!');
 });
 
+// Get all courses
 app.get('/api/courses', (req, res) => {
   res.send(Course);
 });
+// Get a course by ID
+// In a real-world application, you would use a database query to fetch the course
+// by its ID. Here, we are simulating it with an array of objects.
 app.get('/api/courses/:id', (req, res) => {
     const course = Course.find(c => c.id === parseInt(req.params.id));
     //Object Destructuring
     if (!course) return res.status(404).send('The course with the given ID was not found.');
     res.send(course);
 });
+// Add a new course to the array
+// In a real-world application, you would use a database query to add the course
 app.post('/api/courses', (req, res) => {
     const { error } = validateCourse(req.body);
     if (error) return res.status(400).send(error.details[0].message);
@@ -36,7 +42,16 @@ app.post('/api/courses', (req, res) => {
     Course.push(course);
     res.send(course);
 });
-
+// Update a course by ID
+// In a real-world application, you would use a database query to update the course
+app.put('/api/courses/:id', (req, res) => {
+    const course = Course.find(c => c.id === parseInt(req.params.id));
+    const { error } = validateCourse(req.body);
+    if (error) return res.status(400).send(error.details[0].message);
+    course.name = req.body.name;
+    res.send(course);
+});
+// Handle invalid routes
 function validateCourse(course) {
   const schema = Joi.object({
       name: Joi.string().min(3).required()
