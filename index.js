@@ -51,6 +51,17 @@ app.put('/api/courses/:id', (req, res) => {
     course.name = req.body.name;
     res.send(course);
 });
+
+// Delete a course by ID
+// In a real-world application, you would use a database query to delete the course
+app.delete('/api/courses/:id', (req, res) => {
+    const course = Course.find(c => c.id === parseInt(req.params.id));
+    const { error } = validateCourse(req.body);
+    if (error) return res.status(400).send(error.details[0].message);
+    const index = Course.indexOf(course);
+    Course.splice(index, 1);
+    res.send(course);
+});
 // Handle invalid routes
 function validateCourse(course) {
   const schema = Joi.object({
